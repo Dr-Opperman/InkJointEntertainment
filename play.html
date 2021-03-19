@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>InkJoint:Play Music</title>
+    <meta name="viewport" content="width=device-width initial-scale=1.0">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="circle-cropped.png">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #0f0f1b;
+            font-family: sans-serif;
+            font-weight: normal;
+            color: #fff;
+            min-height: 100px;
+            letter-spacing: .6px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1140px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 50px;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+
+        header p {
+            line-height: 26px;
+            font-weight: 300;
+            padding: 0 130px;
+        }
+
+        nav {
+            display: inline-block;
+            width: 100%;
+            border-top: 1px solid;
+        }
+
+        nav ul {
+            padding-left: 0;
+        }
+
+        nav ul.left {
+            float: left;
+        }
+
+        nav ul.right {
+            float: right;
+        }
+
+        nav ul li {
+            list-style: none;
+            display: inline-block;
+            margin-right: 25px;
+        }
+
+        nav ul li:last-child {
+            margin-right: 0;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .autoplay_btn label {
+            display: flex;
+            align-items: center;
+        }
+
+        .autoplay_btn h5 {
+            margin: 0;
+            font-weight: 500;
+        }
+
+        .autoplay_btn span {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 25px;
+            border: 2px solid #414072;
+            border-radius: 50px;
+            margin-left: 5px;
+            transition: all ease 0.5s;
+        }
+
+        .autoplay_btn span::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 19px;
+            background: #414072;
+            border-radius: 50px;
+            top: 3px;
+            left: 4px;
+            transition: all ease 0.5s;
+        }
+
+        .autoplay_btn input:checked~span {
+            border-color: #7270ca;
+            box-shadow: 0 5px 25px rgb(114, 112, 202/ .5).0 0 25px rgb(114, 112, 202/ .5);
+            background: rgb(114, 112, 202/ .5);
+        }
+
+        .autoplay_btn input:checked~span::before {
+            left: 36px;
+            box-shadow: 0 5px 25px rgb(114, 112, 202/ .5).0 0 25px rgb(114, 112, 202/ .5);
+            background: #7270ca;
+        }
+
+        .autoplay_btn input {
+            display: none;
+        }
+
+        .body_content {
+            margin-top: 30px;
+        }
+
+        .body_content .title {
+            background: #414072;
+            color: #fff;
+            padding: 20px 5px;
+            border-radius: 10px;
+            display: flex;
+        }
+
+        .body_content .title span {
+            font-size: 20px;
+        }
+
+        .body_content .title span:nth-child(1),.body_content .list_block span:nth-child(1) {
+            width: 8%;
+        }
+
+        .body_content .title span:nth-child(2),.body_content .list_block span:nth-child(2) {
+            width: 35%;
+        }
+
+        .body_content .title span:nth-child(3),.body_content .list_block span:nth-child(3) {
+            width: 16%;
+        }
+
+        .body_content .title span:nth-child(4),.body_content .list_block span:nth-child(4) {
+            width: 16%;
+        }
+
+        .body_content .title span:nth-child(5),.body_content .list_block span:nth-child(5) {
+            width: 10%;
+        }
+
+        .body_content .title span:nth-child(6),.body_content .list_block span:nth-child(6) {
+            width: 10%;
+        }
+
+        .body_content .list_block {
+            position: relative;
+            padding: 20px 5px;
+            background: #000;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            margin-top: 25px;
+            display: flex;
+            align-items: center;
+        }
+
+        .body_content .list_block span {
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        .body_content .list_block .download_btn {
+            position: absolute;
+            right: 30px;
+        }
+
+        .body_content .list_block .download_btn:hover {
+            opacity: .7;
+        }
+
+        /* Beat animation*/
+        .body_content .beat_animation ul {
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        .body_content .beat_animation ul li {
+            list-style: none;
+            height: 40px;
+            width: 7px;
+            background-color: #fff;
+            display: inline-block;
+            margin: 0 5px;
+            transform-origin: bottom;
+            opacity: .1;
+            animation: beat 1s linear 0s infinite;
+            animation-play-state: paused;
+        }
+
+        @keyframes beat {
+            50% {
+                transform: scaleY(0);
+            }
+        }
+
+        .body_content .beat_animation li:nth-child(1) {
+            animation-delay: .2s;
+        }
+
+        .body_content .beat_animation li:nth-child(2) {
+            animation-delay: .4s;
+        }
+
+        .body_content .beat_animation li:nth-child(4) {
+            animation-delay: .3s;
+        }
+
+        .body_content .list_block.isPlaying {
+            border: 1px solid #4b4980;
+            box-shadow: 0 5px 25px #7471cc5e;
+        }
+
+        /*Play Button*/
+        .body_content span.play_btn {
+            text-align: center;
+        }
+
+        .body_content span.play_btn i {
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all ease 0.5s;
+        }
+
+        .body_content span.play_btn #pause_icon {
+            display: none;
+        }
+
+        .body_content .list_block.isPlaying span.play_btn i {
+            box-shadow: 0 5px 25px #7471cc, 0 0 15px #7471cc;
+        }
+        /*Hide audio track*/
+        .body_content .list_block .track{
+            display: none;
+        }
+        header p a{
+            text-decoration: none;
+            color: #fff;
+            font-size:26px;
+        }
+        header p a:hover{
+            color: #414072;
+        }
+        header p a i{
+            padding-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div class="container">
+            <header>
+                <h1>INKJOINT HITLIST</h1>
+                <p><a href="index.html"><i class="fa fa-home" aria-hidden="true"></i>HOME</a></p>
+                <nav>
+                    <ul class="left">
+                        <li><a href="#">Recent</a></li>
+                        <li><a href="#">Top List</a></li>
+                        <li><a href="#">Most Listened</a></li>
+                        <li><a href="#">Most Recommended</a></li>
+                    </ul>
+                    <ul class="right">
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="#">Requested</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li class="autoplay_btn"><a href="#">
+                                <label>
+                                    <h5>AUTOPLAY</h5>
+                                    <input type="checkbox">
+                                    <span></span>
+                                </label>
+                            </a></li>
+                    </ul>
+                </nav>
+            </header>
+            <div class="body_content">
+                <div class="title">
+                    <span></span>
+                    <span>TITLE</span>
+                    <span>ARTIST</span>
+                    <span>GENRE</span>
+                    <span>DURATION</span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="list">
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+    <script src="data.js"></script>
+    <script>
+        $(document).ready(function () {
+            var list = $(".list");
+            var list_block;
+
+            for (var key in song_list) {
+                list_block = $('<div class="list_block"></div>');
+                list.append(list_block);
+
+                list_block.append('<span class="play_btn"><i id="play_icon" class="fa fa-play-circle-o"></i><i id="pause_icon" class="fa fa-pause"></i></span>');
+                list_block.append('<span class="song_title">' + song_list[key].title + '</span>');
+                list_block.append('<span class="song_artist">' + song_list[key].artist + '</span>');
+                list_block.append('<span class="song_genre">' + song_list[key].genre + '</span>');
+                list_block.append('<span class="song_duration">' + song_list[key].duration + '</span>');
+                list_block.append('<span class="beat_animation"><ul><li></li><li></li><li></li><li></li><li></li></ul></span>');
+                list_block.append('<span class="track"><audio id="audio" controls><source src="songs/' + song_list[key].track + '" type="audio/mp3"></audio></span>');
+                list_block.append('<span class="download_btn"><a href="songs/' + song_list[key].track + '" target="blank"><i id="download_icon" class="fa fa-download" aria-hidden="true"></i></a></span>');
+            }
+            //Play Functionality
+            $(".list_block .play_btn #play_icon").on('click', function (current) {
+                $(this).parent().find("#play_icon").css("display", "none");
+                $(this).parent().find("#pause_icon").css("display", "inline-block");
+                $("#play_icon").not(this).parent().find("#pause_icon").css("display", "none");
+                $("#play_icon").not(this).parent().find("#play_icon").css("display", "inline-block");
+
+                //Add/Remove class
+                $(this).parent().parent().addClass("isPlaying");
+                $("#play_icon").not(this).parent().parent().removeClass("isPlaying");
+
+                //Beat animation 
+                $(this).parent().parent().find(".beat_animation li").css("animation-play-state", "running").css("opacity", "1");
+                $("#play_icon").not(this).parent().parent().find(".beat_animation li").css("animation-play-state", "paused").css("opacity", ".1");
+
+                //Pause next/previous track
+                $("audio").each(function (e) {
+                    if (e !== current.currentTarget) {
+                        $(this)[0].pause();
+                    }
+                });
+                //Play Current audio
+                $(this).parent().parent().find(".track audio")[0].play();
+            });
+
+            //Pause Button Functionality
+            $(".list_block .play_btn #pause_icon").on('click', function () {
+                //Hide Pause Icon
+                $(this).parent().find("#pause_icon").css("display", "none");
+                $(this).parent().find("#play_icon").css("display", "inline-block");
+
+                //Beat animation pause
+                $(this).parent().parent().find(".beat_animation li").css("animation-play-state", "paused").css("opacity", "1");
+
+                //Pause current audio track
+                $(this).parent().parent().find(".track audio")[0].pause();
+            });
+
+            //Autoplay button
+            $(".autoplay_btn input").on('change', function () {
+                if ($(this).is(":checked")) {
+                    $("audio").on('ended', function () {
+                        $(this).parent().parent().next().find("audio")[0].play();
+                        $(".list_block").removeClass("isPlaying");
+                        $(this).parent().parent().next().addClass("isPlaying");
+                        $(this).parent().parent().next().find(".beat_animation li").css("animation-play-state", "running").css("opacity", "1");
+
+                        $(this).parent().parent().next().find("#pause_icon").css("display", "none");
+                        $(this).parent().parent().find.find("#play_icon").css("display", "inline-block");
+                    });
+                }else{
+                    $("audio").on('ended', function () {
+                        $("beat_animation li").css("animation-play-state", "paused").css("opacity", ".1");
+                        $("#pause_icon").css("display", "none");
+                        $("#pause_icon").css("display", "inline-block");
+                    });
+                }
+            }).change();
+        });
+    </script>
+
+</body>
+
+</html>  
